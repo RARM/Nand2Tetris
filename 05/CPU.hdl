@@ -1,0 +1,112 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/CPU.hdl
+
+/**
+ * The Hack CPU (Central Processing unit), consisting of an ALU,
+ * two registers named A and D, and a program counter named PC.
+ * The CPU is designed to fetch and execute instructions written in
+ * the Hack machine language. In particular, functions as follows:
+ * Executes the inputted instruction according to the Hack machine
+ * language specification. The D and A in the language specification
+ * refer to CPU-resident registers, while M refers to the external
+ * memory location addressed by A, i.e. to Memory[A]. The inM input
+ * holds the value of this location. If the current instruction needs
+ * to write a value to M, the value is placed in outM, the address
+ * of the target location is placed in the addressM output, and the
+ * writeM control bit is asserted. (When writeM==0, any value may
+ * appear in outM). The outM and writeM outputs are combinational:
+ * they are affected instantaneously by the execution of the current
+ * instruction. The addressM and pc outputs are clocked: although they
+ * are affected by the execution of the current instruction, they commit
+ * to their new values only in the next time step. If reset==1 then the
+ * CPU jumps to address 0 (i.e. pc is set to 0 in next time step) rather
+ * than to the address resulting from executing the current instruction.
+ */
+
+/* Rodolfo Andrés Rivas Matta-CPU.hdl
+ * CDA 3201C - Intro to Logic Design - Fall 2021
+ * Assignment 5
+ * 10/21/2021
+*/
+
+CHIP CPU {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write to M?
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+    // Part I: Instruction Handling.
+
+    // The A-register section.
+    // Some wires:
+    // aluout = ALU Out
+    // arein = A Register In
+    // lobfar = Load Bit For A Register
+    // aout = A Resgister Out <=========== Output of this section.
+    // lar = Load A Register
+    // satar = Save To A Register
+    //
+    // A Register out will also go to addressM
+    Mux16(a=instruction, b=aluout, sel=instruction[15], out=arein);
+    ARegister(in=arein, load=lobfar, out[0..14]=addressM, out=aout);
+    Not(in=instruction[15], out=lar);
+    And(a=instruction[15], b=instruction[5], out=satar);
+    Or(a=satar, b=lar, out=lobfar);
+
+    // The ALU.
+    // Some wires for this section:
+    // aluout = ALU Out <=========== Output of this section. (Also present in the previous section.)
+    // dout = D Register Output
+    // aomi = A or M Input
+    // zrr = Zero Result
+    // ngr = Negative Result
+    //
+    // ALU out will also go to outM.
+    // writeM = instruction[15] AND instruction[3]
+    And(a=instruction[4], b=instruction[15], out=dload);
+    DRegister(in=aluout, load=dload, out=dout);
+    Mux16(a=aout, b=inM, sel=instruction[12], out=aomi);
+    ALU(x=dout, y=aomi, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=aluout, out=outM, zr=zrr, ng=ngr);
+
+    And(a=instruction[15], b=instruction[3], out=writeM);
+
+
+
+    // Part II: Control.
+
+    // The jump control.
+    // Some wires for this section:
+    // jn = Jump if Negative
+    // jz = Jump if Zero
+    // jp = Jump if Positive
+    // p = It's a Positive
+    // nzr = Non Zero
+    // g = gative (hahaha, no negative, ne-negative = gative = positive? XD)
+    // jmp = Jump bit <============== THIS IS THE OUTPUT OF THIS SECTION
+    And(a=instruction[2], b=ngr, out=jn);
+    And(a=instruction[1], b=zrr, out=jz);
+
+    Not(in=zrr, out=nzr);
+    Not(in=ngr, out=g);
+    And(a=nzr, b=g, out=p);
+    And(a=instruction[0], b=p, out=jp);
+
+    Or(a=jn, b=jz, out=cjn); // Conditional Jump Negative
+    Or(a=cjn, b=jp, out=cjc); // Conditional Jump Complete
+    And(a=cjc, b=instruction[15], out=jmp);
+
+    // Program counter.
+    // incr = Increment bit.
+    Not(in=reset, out=incr);
+    PC(in=aout, load=jmp, inc=incr, reset=reset, out[0..14]=pc);
+}

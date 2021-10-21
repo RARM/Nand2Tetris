@@ -1,0 +1,99 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Mux4Way16.hdl
+
+/* Rodolfo Andrés Rivas Matta-Mux4Way16-complex.hdl
+ * CDA 3201C - Intro to Logic Design - Fall 2021
+ * Assignment 1
+ * 09/14/2021
+ *
+ *
+ * Extra note: This was my first implementation of the Mux4Way16 chip. Of
+ * course, the file Mux4Way14.hdl (my second implementation) is much more
+ * efficient. I wanted to keep this file to observe my progress in refactoring
+ * this chips. Please, omit this file and evaluate Mux4Way14.hdl
+ */
+
+/**
+ * 4-way 16-bit multiplexor:
+ * out = a if sel == 00
+ *       b if sel == 01
+ *       c if sel == 10
+ *       d if sel == 11
+ */
+
+CHIP Mux4Way16 {
+    IN a[16], b[16], c[16], d[16], sel[2];
+    OUT out[16];
+
+    PARTS:
+    /* 16-bit A Out */
+    Or16(
+    	a[0]=sel[0], a[1]=sel[0], a[2]=sel[0], a[3]=sel[0],
+    	a[4]=sel[0], a[5]=sel[0], a[6]=sel[0], a[7]=sel[0],
+    	a[8]=sel[0], a[9]=sel[0], a[10]=sel[0], a[11]=sel[0],
+    	a[12]=sel[0], a[13]=sel[0], a[14]=sel[0], a[15]=sel[0],
+    	b[0]=sel[1], b[1]=sel[1], b[2]=sel[1], b[3]=sel[1],
+    	b[4]=sel[1], b[5]=sel[1], b[6]=sel[1], b[7]=sel[1],
+    	b[8]=sel[1], b[9]=sel[1], b[10]=sel[1], b[11]=sel[1],
+    	b[12]=sel[1], b[13]=sel[1], b[14]=sel[1], b[15]=sel[1],
+    	out=asel);
+    Not16(in=asel, out=nasel);
+    And16(a=a, b=nasel, out=aout);
+
+	/* 16-bit B Out */
+	Not16(
+		in[0]=sel[0], in[1]=sel[0], in[2]=sel[0], in[3]=sel[0],
+		in[4]=sel[0], in[5]=sel[0], in[6]=sel[0], in[7]=sel[0],
+		in[8]=sel[0], in[9]=sel[0], in[10]=sel[0], in[11]=sel[0],
+		in[12]=sel[0], in[13]=sel[0], in[14]=sel[0], in[15]=sel[0],
+		out=nsel0);
+
+    Or16(a=nsel0,
+    	b[0]=sel[1], b[1]=sel[1], b[2]=sel[1], b[3]=sel[1],
+    	b[4]=sel[1], b[5]=sel[1], b[6]=sel[1], b[7]=sel[1],
+    	b[8]=sel[1], b[9]=sel[1], b[10]=sel[1], b[11]=sel[1],
+    	b[12]=sel[1], b[13]=sel[1], b[14]=sel[1], b[15]=sel[1],
+    	out=bsel);
+
+    Not16(in=bsel, out=nbsel);
+    And16(a=b, b=nbsel, out=bout);
+
+    /* 16-bit C Out */
+	Not16(
+		in[0]=sel[1], in[1]=sel[1], in[2]=sel[1], in[3]=sel[1],
+		in[4]=sel[1], in[5]=sel[1], in[6]=sel[1], in[7]=sel[1],
+		in[8]=sel[1], in[9]=sel[1], in[10]=sel[1], in[11]=sel[1],
+		in[12]=sel[1], in[13]=sel[1], in[14]=sel[1], in[15]=sel[1],
+		out=nsel1);
+
+    Or16(
+    	a[0]=sel[0], a[1]=sel[0], a[2]=sel[0], a[3]=sel[0],
+    	a[4]=sel[0], a[5]=sel[0], a[6]=sel[0], a[7]=sel[0],
+    	a[8]=sel[0], a[9]=sel[0], a[10]=sel[0], a[11]=sel[0],
+    	a[12]=sel[0], a[13]=sel[0], a[14]=sel[0], a[15]=sel[0],
+    	b=nsel1, out=csel);
+
+    Not16(in=csel, out=ncsel);
+    And16(a=c, b=ncsel, out=cout);
+
+    /* 16-bit D Out */
+    And16(
+    	a[0]=sel[0], a[1]=sel[0], a[2]=sel[0], a[3]=sel[0],
+    	a[4]=sel[0], a[5]=sel[0], a[6]=sel[0], a[7]=sel[0],
+    	a[8]=sel[0], a[9]=sel[0], a[10]=sel[0], a[11]=sel[0],
+    	a[12]=sel[0], a[13]=sel[0], a[14]=sel[0], a[15]=sel[0],
+    	b[0]=sel[1], b[1]=sel[1], b[2]=sel[1], b[3]=sel[1],
+    	b[4]=sel[1], b[5]=sel[1], b[6]=sel[1], b[7]=sel[1],
+    	b[8]=sel[1], b[9]=sel[1], b[10]=sel[1], b[11]=sel[1],
+    	b[12]=sel[1], b[13]=sel[1], b[14]=sel[1], b[15]=sel[1],
+    	out=dsel);
+    And16(a=d, b=dsel, out=dout);
+
+    /* Merge results */
+    Or16(a=aout, b=bout, out=about);
+    Or16(a=cout, b=dout, out=cdout);
+
+    Or16(a=about, b=cdout, out=out);
+}

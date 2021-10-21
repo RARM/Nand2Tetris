@@ -1,0 +1,43 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/03/a/PC.hdl
+
+/* Rodolfo Andrés Rivas Matta-PC.hdl
+ * CDA 3201C - Intro to Logic Design - Fall 2021
+ * Assignment 3
+ * 09/14/2021
+ */
+
+/**
+ * A 16-bit counter with load and reset control bits.
+ * if      (reset[t] == 1) out[t+1] = 0
+ * else if (load[t] == 1)  out[t+1] = in[t]
+ * else if (inc[t] == 1)   out[t+1] = out[t] + 1  (integer addition)
+ * else                    out[t+1] = out[t]
+ */
+
+CHIP PC {
+    IN in[16],load,inc,reset;
+    OUT out[16];
+
+    PARTS:
+    // Should the register listen?
+    Or(a=load, b=inc, out=ol1);		// ol1: Or Listen 1
+    Or(a=ol1, b=reset, out=lrl);	// lrl: Let the Register Listen
+
+    // The register.
+    Register(in=ri, load=lrl, out=out, out=fbck);
+    	// ri: Register Input
+    	// fbck: Feedback
+
+    // The reset.
+    Mux16(a=li, b=false, sel=reset, out=ri); // li: Load Input
+
+    // The load.
+    Mux16(a=incd, b=in, sel=load, out=li); // incd: Increment Data
+
+    // The increment.
+    Mux16(a=fbck, b=incr, sel=inc, out=incd); // incr: Incremented
+    Inc16(in=fbck, out=incr);
+}

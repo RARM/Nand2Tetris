@@ -1,0 +1,56 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/Memory.hdl
+
+/**
+ * The complete address space of the Hack computer's memory,
+ * including RAM and memory-mapped I/O.
+ * The chip facilitates read and write operations, as follows:
+ *     Read:  out(t) = Memory[address(t)](t)
+ *     Write: if load(t-1) then Memory[address(t-1)](t) = in(t-1)
+ * In words: the chip always outputs the value stored at the memory
+ * location specified by address. If load==1, the in value is loaded
+ * into the memory location specified by address. This value becomes
+ * available through the out output from the next time step onward.
+ * Address space rules:
+ * Only the upper 16K+8K+1 words of the Memory chip are used.
+ * Access to address>0x6000 is invalid. Access to any address in
+ * the range 0x4000-0x5FFF results in accessing the screen memory
+ * map. Access to address 0x6000 results in accessing the keyboard
+ * memory map. The behavior in these addresses is described in the
+ * Screen and Keyboard chip specifications given in the book.
+ */
+
+/* Rodolfo Andrés Rivas Matta-Memory.hdl
+ * CDA 3201C - Intro to Logic Design - Fall 2021
+ * Assignment 5
+ * 10/21/2021
+*/
+
+CHIP Memory {
+    IN in[16], load, address[15];
+    OUT out[16];
+
+    PARTS:
+    // RAM16 section.
+    Not(in=address[14], out=nolebi); // nolebi: Not Least Significant Bit
+    And(a=load, b=nolebi, out=lotoram); // lotoram: Load Bit to RAM
+    RAM16K(in=in, load=lotoram, address=address[0..13], out=ram16kout);
+
+    // Screen section.
+    Not(in=address[13], out=nobebi); // nobebi: Not Before Least Significant Bit
+    And(a=nobebi, b=address[14], out=abiscre); // abiscre: Address Bit for Screen
+    And(a=abiscre, b=load, out=screlobi); // screlobi: Screen Load Bit
+    Screen(in=in, load=screlobi, address=address[0..12], out=screenout);
+
+    // Keyboard section.
+    Keyboard(out=keyout);
+
+    // Memory out section.
+    Mux16(a=screenout, b=keyout, sel=address[13], out=keyscr); // keyscr: Key and Screen
+    Mux16(a=ram16kout, b=keyscr, sel=address[14], out=out);
+
+    // Note: although addresses beyond x6000 are null,
+    // this implementation will return contents of keyboard.
+}

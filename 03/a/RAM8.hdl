@@ -1,0 +1,40 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/03/a/RAM8.hdl
+
+/* Rodolfo Andrés Rivas Matta-RAM8.hdl
+ * CDA 3201C - Intro to Logic Design - Fall 2021
+ * Assignment 3
+ * 09/14/2021
+ */
+
+/**
+ * Memory of 8 registers, each 16 bit-wide. Out holds the value
+ * stored at the memory location specified by address. If load==1, then
+ * the in value is loaded into the memory location specified by address
+ * (the loaded value will be emitted to out from the next time step onward).
+ */
+
+CHIP RAM8 {
+    IN in[16], load, address[3];
+    OUT out[16];
+
+    PARTS:
+    DMux8Way(in=load, sel=address, a=rl1, b=rl2, c=rl3, d=rl4, e=rl5, f=rl6, g=rl7, h=rl8);
+    // rlX stands for Register Load X where "X" is a number.
+    // roX stands for Register Output X where "X" is a number.
+
+    // Registers.
+    Register(in=in, load=rl1, out=ro1);
+    Register(in=in, load=rl2, out=ro2);
+    Register(in=in, load=rl3, out=ro3);
+    Register(in=in, load=rl4, out=ro4);
+    Register(in=in, load=rl5, out=ro5);
+    Register(in=in, load=rl6, out=ro6);
+    Register(in=in, load=rl7, out=ro7);
+    Register(in=in, load=rl8, out=ro8);
+
+    // Selecting output.
+    Mux8Way16(a=ro1, b=ro2, c=ro3, d=ro4, e=ro5, f=ro6, g=ro7, h=ro8, sel=address, out=out);
+}

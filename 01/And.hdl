@@ -1,0 +1,25 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/And.hdl
+
+/* Rodolfo Andrés Rivas Matta-And.hdl
+ * CDA 3201C - Intro to Logic Design - Fall 2021
+ * Assignment 1
+ * 09/14/2021
+ */
+
+/**
+ * And gate:
+ * out = 1 if (a == 1 and b == 1)
+ *       0 otherwise
+ */
+
+CHIP And {
+    IN a, b;
+    OUT out;
+
+    PARTS:
+    Nand(a=a, b=b, out=x);
+    Nand(a=x, b=x, out=out);
+}

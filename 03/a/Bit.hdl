@@ -1,0 +1,25 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/03/a/Bit.hdl
+
+/* Rodolfo Andrés Rivas Matta-Bit.hdl
+ * CDA 3201C - Intro to Logic Design - Fall 2021
+ * Assignment 3
+ * 09/14/2021
+ */
+
+/**
+ * 1-bit register:
+ * If load[t] == 1 then out[t+1] = in[t]
+ *                 else out does not change (out[t+1] = out[t])
+ */
+
+CHIP Bit {
+    IN in, load;
+    OUT out;
+
+    PARTS:
+    Mux(a=pop, b=in, sel=load, out=data);
+    DFF(in=data, out=out, out=pop); // pop: previous output pin
+}

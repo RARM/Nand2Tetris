@@ -1,0 +1,23 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Not.hdl
+
+/* Rodolfo Andrés Rivas Matta-Not.hdl
+ * CDA 3201C - Intro to Logic Design - Fall 2021
+ * Assignment 1
+ * 09/14/2021
+ */
+
+/**
+ * Not gate:
+ * out = not in
+ */
+
+CHIP Not {
+    IN in;
+    OUT out;
+
+    PARTS:
+    Nand(a=in, b=in, out=out);
+}
