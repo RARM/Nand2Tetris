@@ -3,6 +3,7 @@
 
 #include <string>
 #include <fstream>
+#include <regex>
 
 class Parser
 {
@@ -18,10 +19,15 @@ public:
 	~Parser();
 
 	// Returns true if there are more lines to process in the input file.
-	bool has_more_lines();
+	// bool has_more_lines();
 
 	// Updates the current instruction.
-	void advance();
+	// void advance();
+
+	// Read more about why did I delete these methods on the Parser.cpp file.
+
+	// Returns true if it finds the next valid instruction. If it find one, then it makes it the current instruction.
+	bool find_next_instruction();
 
 	// Return the current instruction's type.
 	int instruction_type();
@@ -38,7 +44,7 @@ public:
 	// Returns the jump part of the current instruction if it is a C instruction. It returns a blank string otherwise.
 	std::string jump();
 
-private:
+// private:
 	std::ifstream input_file;
 	std::string current_instruction;
 };
