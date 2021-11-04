@@ -4,12 +4,6 @@ Parser::Parser(std::string filename)
     : current_instruction { NULL }, input_file { std::ifstream(filename) }
 {}
 
-Parser::~Parser()
-{
-    if (this->input_file.is_open()) this->input_file.close();
-    return;
-}
-
 // bool Parser::has_more_lines()
 // {
     // Is this method useless?
@@ -130,3 +124,11 @@ std::string Parser::jump()
 
     return jump_found;
 }
+
+// ----- Some extra methods. Getters.
+
+bool Parser::is_open()
+{ return this->input_file.is_open(); }
+
+std::string Parser::get_instruction()
+{ return this->current_instruction; }

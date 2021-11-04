@@ -8,7 +8,7 @@ int main(int argc, const char* argv[])
     else
     {
         Parser parser(argv[1]);
-        bool is_open{ parser.input_file.is_open() };
+        bool is_open{ parser.is_open() };
         
         std::cout << "Is file \"" << argv[1] << "\" opened? " << ((is_open) ? "Yes" : "No") << ".\n\n";
 
@@ -16,7 +16,7 @@ int main(int argc, const char* argv[])
         {
             while (parser.find_next_instruction())
             {
-                std::cout << "Instruction found: \"" << parser.current_instruction << "\".\n"
+                std::cout << "Instruction found: \"" << parser.get_instruction() << "\".\n"
                           << "This is ";
 
                 switch (parser.instruction_type())

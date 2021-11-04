@@ -17,7 +17,6 @@ public:
 	
 	// Constructor: provide input filename as argument.
 	Parser(std::string filename);
-	~Parser();
 
 	// Returns true if there are more lines to process in the input file.
 	// bool has_more_lines();
@@ -45,7 +44,15 @@ public:
 	// Returns the jump part of the current instruction if it is a C instruction. It returns a blank string otherwise.
 	std::string jump();
 
-// private:
+	// ----- Some extra functions. Getters.
+
+	// Is input file open? Returns true if so.
+	bool is_open();
+
+	// Returns current instruction.
+	std::string get_instruction();
+
+private:
 	std::ifstream input_file;
 	std::string current_instruction;
 };
