@@ -22,7 +22,8 @@ int main(int argc, const char* argv[])
                 switch (parser.instruction_type())
                 {
                 case Parser::A_INSTRUCTION:
-                    std::cout << "an a-instruction.";
+                    std::cout << "an a-instruction.\n"
+                              << "Integer or symbol: \"" << parser.symbol() << "\"";
                     break;
                 case Parser::L_INSTRUCTION:
                     std::cout << "a label.\n"
@@ -31,6 +32,7 @@ int main(int argc, const char* argv[])
                     break;
                 case Parser::C_INSTRUCTION:
                     std::cout << "a c-instruction."
+                              << "\nCOMP found: \"" << parser.comp() << "\""
                               << ((parser.dest().empty()) ? "" : "\nDEST found: \"" + parser.dest() + "\"")
                               << ((parser.jump().empty()) ? "" : "\nJUMP found: \"" + parser.jump() + "\"");
                     break;

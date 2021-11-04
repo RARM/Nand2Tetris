@@ -67,8 +67,8 @@ int Parser::instruction_type()
 std::string Parser::symbol()
 {
     std::string symb_found;
-    const std::regex symb_regx("\\(([0-9]+|([A-Za-z_.$:]+[A-Za-z_.$:0-9]*)+){1}\\)"); // A valid label.
-    const std::regex par("\\(|\\)"); // Parentheses.
+    const std::regex symb_regx("[\\(@]{1}([0-9]+|([A-Za-z_.$:]+[A-Za-z_.$:0-9]*)+){1}\\)?"); // A valid label.
+    const std::regex par("\\(|\\)|@"); // Parentheses or @ symbol.
     std::smatch match_found;
 
     std::regex_search(this->current_instruction, match_found, symb_regx);
@@ -76,7 +76,7 @@ std::string Parser::symbol()
     if (!match_found.empty())
     {
         symb_found = match_found.str();
-        symb_found = std::regex_replace(symb_found, par, ""); // Removing parentheses.
+        symb_found = std::regex_replace(symb_found, par, ""); // Removing parentheses or @ symbol.
     }
     else symb_found = "";
     
@@ -86,7 +86,7 @@ std::string Parser::symbol()
 std::string Parser::dest()
 {
     std::string dest_found;
-    const std::regex dest_regx("[ADM]{1,3}="); // The JUMP instruction.
+    const std::regex dest_regx("[ADM]{1,3}="); // The DEST instruction.
     std::smatch match_found;
 
     std::regex_search(this->current_instruction, match_found, dest_regx);
@@ -103,7 +103,14 @@ std::string Parser::dest()
 
 std::string Parser::comp()
 {
-    return "";
+    std::string comp_ins(this->current_instruction);
+    const std::regex dest_regx("[ADM]{1,3}="); // The DEST instruction.
+    const std::regex jump_regx(";[JGTEQLNMP]{3}"); // The JUMP instruction.
+
+    comp_ins = std::regex_replace(comp_ins, dest_regx, ""); // Removing the DEST instruction.
+    comp_ins = std::regex_replace(comp_ins, jump_regx, ""); // Removing the COMP instruction.
+
+    return comp_ins; // Returning what is left.
 }
 
 std::string Parser::jump()

@@ -39,7 +39,7 @@ public:
 	// Returns the dest part of the current instruction if it is a C instruction. It returns a blank string otherwise.
 	std::string dest();
 
-	// Returns the comp part of the current instruction if it is a C instruction. It returns a blank string otherwise.
+	// Returns the comp part of the current instruction. This is found by removing the jump and dest instructions, so there may be a return value even if the current instruction is not a C instruction.
 	std::string comp();
 
 	// Returns the jump part of the current instruction if it is a C instruction. It returns a blank string otherwise.
