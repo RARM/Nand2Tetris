@@ -86,7 +86,7 @@ std::string Parser::symbol()
 std::string Parser::dest()
 {
     std::string dest_found;
-    const std::regex dest_regx(";[JGTEQLNMP]{3}"); // The JUMP instruction.
+    const std::regex dest_regx("[ADM]{1,3}="); // The JUMP instruction.
     std::smatch match_found;
 
     std::regex_search(this->current_instruction, match_found, dest_regx);
@@ -94,7 +94,7 @@ std::string Parser::dest()
     if (!match_found.empty())
     {
         dest_found = match_found.str();
-        dest_found = std::regex_replace(dest_found, std::regex(";"), ""); // Removing colon.
+        dest_found = std::regex_replace(dest_found, std::regex("="), ""); // Removing equal sign.
     }
     else dest_found = "";
 
@@ -108,5 +108,18 @@ std::string Parser::comp()
 
 std::string Parser::jump()
 {
-    return "";
+    std::string jump_found;
+    const std::regex jump_regx(";[JGTEQLNMP]{3}"); // The JUMP instruction.
+    std::smatch match_found;
+
+    std::regex_search(this->current_instruction, match_found, jump_regx);
+
+    if (!match_found.empty())
+    {
+        jump_found = match_found.str();
+        jump_found = std::regex_replace(jump_found, std::regex(";"), ""); // Removing colon.
+    }
+    else jump_found = "";
+
+    return jump_found;
 }

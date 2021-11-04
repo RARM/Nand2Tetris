@@ -30,8 +30,9 @@ int main(int argc, const char* argv[])
 
                     break;
                 case Parser::C_INSTRUCTION:
-                    std::cout << "a c-instruction.\n"
-                              << "Destination found: \"" << parser.dest() << "\"";
+                    std::cout << "a c-instruction."
+                              << ((parser.dest().empty()) ? "" : "\nDEST found: \"" + parser.dest() + "\"")
+                              << ((parser.jump().empty()) ? "" : "\nJUMP found: \"" + parser.jump() + "\"");
                     break;
                 default:
                     std::cout << "an invalid instruction.";
