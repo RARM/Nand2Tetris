@@ -10,9 +10,10 @@ class Parser
 public:
 	// Constants static variables.
 	
-	static constexpr int A_INSTRUCTION = 0;
-	static constexpr int C_INSTRUCTION = 1;
-	static constexpr int L_INSTRUCTION = 2;
+	static constexpr int INVALID_INS = 0;
+	static constexpr int A_INSTRUCTION = 1;
+	static constexpr int C_INSTRUCTION = 2;
+	static constexpr int L_INSTRUCTION = 3;
 	
 	// Constructor: provide input filename as argument.
 	Parser(std::string filename);

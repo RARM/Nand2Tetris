@@ -4,6 +4,12 @@ Parser::Parser(std::string filename)
     : current_instruction { NULL }, input_file { std::ifstream(filename) }
 {}
 
+Parser::~Parser()
+{
+    if (this->input_file.is_open()) this->input_file.close();
+    return;
+}
+
 // bool Parser::has_more_lines()
 // {
     // Is this method useless?
@@ -21,7 +27,7 @@ Parser::Parser(std::string filename)
 bool Parser::find_next_instruction()
 {
     std::string line;
-    std::regex wsac("[\\t ]+|(\\/\\/.*)+"); // wsac = White Spaces And Comments
+    const std::regex wsac("[\\t ]+|(\\/\\/.*)+"); // wsac = White Spaces And Comments
     // Regex for white space or comment: [\t ]+|(\/\/.*)+
     bool found_instruction;
 
@@ -40,29 +46,59 @@ bool Parser::find_next_instruction()
     }
 
     return found_instruction;
-    //  Note for later optimizations. A valid A-instruction.
-    // (@([0-9]+|([A-Za-z_.$:]+[A-Za-z_.$:0-9]*)+)){1}
-}
-
-Parser::~Parser()
-{
-    if (this->input_file.is_open()) this->input_file.close();
-    return;
 }
 
 int Parser::instruction_type()
 {
-    return 0;
+    const std::regex a_ins("(@([0-9]+|([A-Za-z_.$:]+[A-Za-z_.$:0-9]*)+)){1}"); // Regex that matches an A-Instruction.
+    const std::regex label("\\(([0-9]+|([A-Za-z_.$:]+[A-Za-z_.$:0-9]*)+){1}\\)"); // Label.
+    const std::regex c_ins("A?D?M?=?[ADM01\\-!+&|]{1,3};?[JGTEQLNMP]{0,3}"); // C_Instruction <- This regex could be improved.
+    
+    int ins_type;
+
+    if (std::regex_match(this->current_instruction, a_ins)) ins_type = Parser::A_INSTRUCTION;
+    else if (std::regex_match(this->current_instruction, label)) ins_type = Parser::L_INSTRUCTION;
+    else if (std::regex_match(this->current_instruction, c_ins)) ins_type = Parser::C_INSTRUCTION;
+    else ins_type = Parser::INVALID_INS;
+    
+    return ins_type;
 }
 
 std::string Parser::symbol()
 {
-    return "";
+    std::string symb_found;
+    const std::regex symb_regx("\\(([0-9]+|([A-Za-z_.$:]+[A-Za-z_.$:0-9]*)+){1}\\)"); // A valid label.
+    const std::regex par("\\(|\\)"); // Parentheses.
+    std::smatch match_found;
+
+    std::regex_search(this->current_instruction, match_found, symb_regx);
+
+    if (!match_found.empty())
+    {
+        symb_found = match_found.str();
+        symb_found = std::regex_replace(symb_found, par, ""); // Removing parentheses.
+    }
+    else symb_found = "";
+    
+    return symb_found;
 }
 
 std::string Parser::dest()
 {
-    return "";
+    std::string dest_found;
+    const std::regex dest_regx(";[JGTEQLNMP]{3}"); // The JUMP instruction.
+    std::smatch match_found;
+
+    std::regex_search(this->current_instruction, match_found, dest_regx);
+
+    if (!match_found.empty())
+    {
+        dest_found = match_found.str();
+        dest_found = std::regex_replace(dest_found, std::regex(";"), ""); // Removing colon.
+    }
+    else dest_found = "";
+
+    return dest_found;
 }
 
 std::string Parser::comp()

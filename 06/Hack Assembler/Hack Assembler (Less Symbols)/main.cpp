@@ -8,10 +8,39 @@ int main(int argc, const char* argv[])
     else
     {
         Parser parser(argv[1]);
-        std::cout << "Is file \"" << argv[1] << "\" opened? " << ((parser.input_file.is_open()) ? "Yes" : "No") << ".\n";
+        bool is_open{ parser.input_file.is_open() };
         
-        if (parser.find_next_instruction())
-            std::cout << "First instruction found: \"" << parser.current_instruction << "\".\n";
+        std::cout << "Is file \"" << argv[1] << "\" opened? " << ((is_open) ? "Yes" : "No") << ".\n\n";
+
+        if (is_open)
+        {
+            while (parser.find_next_instruction())
+            {
+                std::cout << "Instruction found: \"" << parser.current_instruction << "\".\n"
+                          << "This is ";
+
+                switch (parser.instruction_type())
+                {
+                case Parser::A_INSTRUCTION:
+                    std::cout << "an a-instruction.";
+                    break;
+                case Parser::L_INSTRUCTION:
+                    std::cout << "a label.\n"
+                              << "Label found: \"" << parser.symbol() << "\"";
+
+                    break;
+                case Parser::C_INSTRUCTION:
+                    std::cout << "a c-instruction.\n"
+                              << "Destination found: \"" << parser.dest() << "\"";
+                    break;
+                default:
+                    std::cout << "an invalid instruction.";
+                }
+
+                std::cout << "\n\n";
+            }
+        }
+        
     }
 
     return 0;
