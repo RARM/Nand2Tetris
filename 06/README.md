@@ -9,3 +9,5 @@ This project is organized as follows:
 - `AssemblerB`: (Extra) The previous assemblers translate Hack assembly code to a text file with the characters `0`, `1`, and the newline character only. This assembler translate the Hack assembly code to an actual binary file.
 
 Open the Hack Assembler solution in Visual Studio 2019 to view each project in detail.
+
+Unit Testing: https://devblogs.microsoft.com/cppblog/cpp-testing-in-visual-studio/

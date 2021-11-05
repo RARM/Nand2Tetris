@@ -57,6 +57,4 @@ private:
 	std::string current_instruction;
 };
 
-
-
 #endif
