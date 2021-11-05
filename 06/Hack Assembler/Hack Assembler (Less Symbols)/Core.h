@@ -10,7 +10,7 @@ public:
 	static std::string dest(std::string mnemonic);
 	
 	// It returns the binary code (as a string) for the comp mnemonic.
-	// static std::string comp(std::string mnemonic);
+	static std::string comp(std::string mnemonic);
 	
 	// It returns the binary code (as a string) for the jump mnemonic.
 	static std::string jump(std::string mnemonic);
