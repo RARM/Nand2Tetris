@@ -56,3 +56,16 @@ std::string Core::jump(std::string mnemonic)
 
     return output;
 }
+
+std::string Core::integer(std::string number)
+{
+    std::string output("");
+    int int_num(std::stoi(number));
+    
+    if (int_num < 32768)
+        for (int i = 14; i >= 0; i--) // For 15 bit.
+            output += ((int_num >> i) & 0x0001) ? "1" : "0";
+    else output = "000000000000000"; // 15 bits of 0 if invalid integer.
+
+    return output;
+}

@@ -1,6 +1,7 @@
 // Hack Assembler Less Symbol - This is phase one of the Hack Assembler project.
 #include <iostream>
 #include "Parser.h"
+#include "Core.h"
 
 int main(int argc, const char* argv[])
 {

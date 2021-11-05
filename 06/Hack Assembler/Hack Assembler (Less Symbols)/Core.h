@@ -14,6 +14,9 @@ public:
 	
 	// It returns the binary code (as a string) for the jump mnemonic.
 	static std::string jump(std::string mnemonic);
+
+	// It returns the binary code (as a string) of an integers less than 32,768 (15-bit).
+	static std::string integer(std::string number);
 };
 
 #endif
