@@ -1,50 +1,54 @@
-// Hack Assembler Less Symbol - This is phase one of the Hack Assembler project.
 #include <iostream>
+#include <string>
+#include <fstream>
 #include "Parser.h"
 #include "Core.h"
 
-int main(int argc, const char* argv[])
+int main(int argc, char* argv[])
 {
-    if (argc < 2) std::cout << "No arguments were passed.\n";
+    if (argc <= 1) std::cout << "No arguments...\n\n";
     else
     {
-        Parser parser(argv[1]);
-        bool is_open{ parser.is_open() };
-        
-        std::cout << "Is file \"" << argv[1] << "\" opened? " << ((is_open) ? "Yes" : "No") << ".\n\n";
-
-        if (is_open)
+        for (size_t i = 1; i < argc; i++) // Compiles every file passed as argument.
         {
-            while (parser.find_next_instruction())
+            // Check if file ends in ".asm".
+            const std::string ext(".asm");
+            std::string filename(argv[i]);
+            
+            if (filename.compare(filename.length() - ext.length(), ext.length(), ext) != 0)
+                std::cout << "The file \"" << argv[i] << "\" is not of the extension \".asm\".\n";
+            else
             {
-                std::cout << "Instruction found: \"" << parser.get_instruction() << "\".\n"
-                          << "This is ";
+                // Compile file if the extension is correct.
+                Parser parser(filename);
 
-                switch (parser.instruction_type())
+                // Create or rewrite target file.
+                filename.erase(filename.length() - ext.length(), ext.length());
+                std::ofstream file_output(filename + ".hack");
+
+                if (file_output.is_open())
                 {
-                case Parser::A_INSTRUCTION:
-                    std::cout << "an a-instruction.\n"
-                              << "Integer or symbol: \"" << parser.symbol() << "\"";
-                    break;
-                case Parser::L_INSTRUCTION:
-                    std::cout << "a label.\n"
-                              << "Label found: \"" << parser.symbol() << "\"";
-
-                    break;
-                case Parser::C_INSTRUCTION:
-                    std::cout << "a c-instruction."
-                              << "\nCOMP found: \"" << parser.comp() << "\""
-                              << ((parser.dest().empty()) ? "" : "\nDEST found: \"" + parser.dest() + "\"")
-                              << ((parser.jump().empty()) ? "" : "\nJUMP found: \"" + parser.jump() + "\"");
-                    break;
-                default:
-                    std::cout << "an invalid instruction.";
+                    while (parser.find_next_instruction())
+                    {   // Translation.
+                        switch (parser.instruction_type())
+                        {
+                        case Parser::A_INSTRUCTION:
+                            file_output << "0" << Core::integer(parser.symbol()) << "\n";
+                            break;
+                        case Parser::C_INSTRUCTION:
+                            file_output << "111" << Core::comp(parser.comp()) << Core::dest(parser.dest()) << Core::jump(parser.jump()) << "\n";
+                            break;
+                        default:
+                            std::cout << "An invalid instruction type has been found in the source code.\n";
+                            break;
+                        }
+                    }
                 }
+                else std::cout << "Could open \"" << filename << ".hack\" for writing.\n";
 
-                std::cout << "\n\n";
+                file_output.close();
             }
         }
-        
     }
 
     return 0;
