@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
             // Check if file ends in ".asm".
             const std::string ext(".asm");
             std::string filename(argv[i]);
-            
+
             if (filename.compare(filename.length() - ext.length(), ext.length(), ext) != 0)
                 std::cout << "The file \"" << argv[i] << "\" is not of the extension \".asm\".\n";
             else

@@ -1,7 +1,7 @@
 #include "Parser.h"
 
 Parser::Parser(std::string filename)
-    : current_instruction { NULL }, input_file { std::ifstream(filename) }
+    : current_instruction{ NULL }, input_file{ std::ifstream(filename) }
 {}
 
 // bool Parser::has_more_lines()
@@ -47,14 +47,14 @@ int Parser::instruction_type()
     const std::regex a_ins("(@([0-9]+|([A-Za-z_.$:]+[A-Za-z_.$:0-9]*)+)){1}"); // Regex that matches an A-Instruction.
     const std::regex label("\\(([0-9]+|([A-Za-z_.$:]+[A-Za-z_.$:0-9]*)+){1}\\)"); // Label.
     const std::regex c_ins("[ADM]{0,3}=?[ADM01\\-!+&|]{1,3};?[JGTEQLNMP]{0,3}"); // C_Instruction <- This regex could be improved.
-    
+
     int ins_type;
 
     if (std::regex_match(this->current_instruction, a_ins)) ins_type = Parser::A_INSTRUCTION;
     else if (std::regex_match(this->current_instruction, label)) ins_type = Parser::L_INSTRUCTION;
     else if (std::regex_match(this->current_instruction, c_ins)) ins_type = Parser::C_INSTRUCTION;
     else ins_type = Parser::INVALID_INS;
-    
+
     return ins_type;
 }
 
@@ -73,7 +73,7 @@ std::string Parser::symbol()
         symb_found = std::regex_replace(symb_found, par, ""); // Removing parentheses or @ symbol.
     }
     else symb_found = "";
-    
+
     return symb_found;
 }
 
@@ -128,7 +128,11 @@ std::string Parser::jump()
 // ----- Some extra methods. Getters.
 
 bool Parser::is_open()
-{ return this->input_file.is_open(); }
+{
+    return this->input_file.is_open();
+}
 
 std::string Parser::get_instruction()
-{ return this->current_instruction; }
+{
+    return this->current_instruction;
+}
