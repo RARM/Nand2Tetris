@@ -18,6 +18,9 @@ public:
 	// Constructor: provide input filename as argument.
 	Parser(std::string filename);
 
+	// Destructor. Closes input file.
+	~Parser();
+
 	// Returns true if there are more lines to process in the input file.
 	// bool has_more_lines();
 
@@ -28,6 +31,9 @@ public:
 
 	// Returns true if it finds the next valid instruction. If it find one, then it makes it the current instruction.
 	bool find_next_instruction();
+
+	// Restarts the parser bringing the reading position to the start of the file and clearing current instruction.
+	void rewind();
 
 	// Return the current instruction's type.
 	int instruction_type();

@@ -1,8 +1,13 @@
 #include "Parser.h"
 
 Parser::Parser(std::string filename)
-    : current_instruction{ NULL }, input_file{ std::ifstream(filename) }
+    : current_instruction{ "" }, input_file{ std::ifstream(filename) }
 {}
+
+Parser::~Parser()
+{
+    this->input_file.close();
+}
 
 // bool Parser::has_more_lines()
 // {
@@ -40,6 +45,14 @@ bool Parser::find_next_instruction()
     }
 
     return found_instruction;
+}
+
+void Parser::rewind()
+{
+    this->input_file.clear();
+    this->input_file.seekg(0);
+    this->current_instruction = "";
+    return;
 }
 
 int Parser::instruction_type()
