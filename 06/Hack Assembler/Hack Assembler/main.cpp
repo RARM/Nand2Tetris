@@ -4,13 +4,14 @@
 #include <fstream>
 #include "Parser.h"
 #include "Core.h"
+#include "Symbols.h"
 
 int main(int argc, char* argv[])
 {
     if (argc <= 1) std::cout << "No arguments...\n\n";
     else
     {
-        for (size_t i = 1; i < argc; i++) // Compiles every file passed as argument.
+        for (int i = 1; i < argc; i++) // Compiles every file passed as argument.
         {
             // Check if file ends in ".asm".
             const std::string ext(".asm");
@@ -22,6 +23,7 @@ int main(int argc, char* argv[])
             {
                 // Compile file if the extension is correct.
                 Parser parser(filename);
+                // Symbols table();
 
                 // Create or rewrite target file.
                 filename.erase(filename.length() - ext.length(), ext.length());
