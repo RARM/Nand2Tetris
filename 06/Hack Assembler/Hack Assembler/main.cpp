@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
                         if (!invalid_instruction)
                         {
                             bool fail{ false };
-                        
+
                             while (parser.find_next_instruction() && !fail)
                             {
                                 switch (parser.instruction_type())
@@ -92,14 +92,14 @@ int main(int argc, char* argv[])
                                     }
                                 }
                                     break;
-                            
+
                                 case Parser::C_INSTRUCTION:
                                     file_output << "111" << Core::comp(parser.comp()) << Core::dest(parser.dest()) << Core::jump(parser.jump()) << "\n";
                                     break;
 
                                 case Parser::L_INSTRUCTION:
                                     break; // Labels are ignored.
-                            
+
                                 default:
                                     std::cout << "Error: instruction not recognized: \"" << parser.get_instruction() << "\".\n";
                                     fail = true;
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
                                 std::cout << "Total instructions assembled: " << --line_number << ".\n";
                         }
                     }
-                
+
                     else
                         if (!file_output.is_open()) std::cout << "Could not open \"" << filename << ".hack\" for writing.\n";
 
@@ -168,7 +168,7 @@ void initialize_table(Symbols& table)
 bool is_number(const std::string& text)
 {
     const std::regex number("[0-9]+"); // https://regexr.com/
-    
+
     return std::regex_match(text, number);
 }
 
@@ -177,13 +177,13 @@ std::pair<bool, std::string> construct_a(Parser& parser, Symbols& table)
     static int counter{ 16 };
     bool success;
     std::string a_string("0");
-    
+
     if (is_number(parser.symbol())) // If it is just a number.
     {
         a_string += Core::integer(parser.symbol()) + "\n";
         success = true;
     }
-    
+
     else if (table.contains(parser.symbol())) // If it is a symbol already on the table.
     {
         a_string += Core::integer(std::to_string(table.getAddress(parser.symbol()))) + "\n";
