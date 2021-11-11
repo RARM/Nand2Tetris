@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
                         // First pass.
                         while (parser.find_next_instruction() && !invalid_instruction)
-                        {
+                        {                            
                             switch (parser.instruction_type())
                             {
                             case Parser::A_INSTRUCTION:
@@ -106,9 +106,6 @@ int main(int argc, char* argv[])
                                     break;
                                 }
                             }
-
-                            if (!fail)
-                                std::cout << "Total instructions assembled: " << --line_number << ".\n";
                         }
                     }
 
@@ -201,7 +198,7 @@ std::pair<bool, std::string> construct_a(Parser& parser, Symbols& table)
     else // If it is a symbol, it is not on the table, and there is space for a new symbol.
     {
         table.addEntry(parser.symbol(), counter);
-        a_string += Core::integer(std::to_string(counter++));
+        a_string += Core::integer(std::to_string(counter++)) + "\n";
         success = true;
     }
 
