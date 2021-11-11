@@ -1,3 +1,4 @@
+// Hack Assembler -- Phase 2 assembler. It processes symbols as well.
 #include <iostream>
 #include <string>
 #include <fstream>
