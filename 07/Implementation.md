@@ -31,4 +31,4 @@ Valid segments:
 ## The Parser
 [This article](https://tomassetti.me/guide-parsing-algorithms-terminology/) gives a practical approach to the implementation of parsers. I use it as a starting point for my solution.
 
-On another note, I will follow the recommended API except for one routine on the parser. As I've done in project 6, I will combine the `hasMoreLines` and the `advance` functions into one. You can find more information about this issue on the source code for the parser of project six and in this thread.
+On another note, I will follow the recommended API except for one routine on the parser. As I've done in project 6, I will combine the `hasMoreLines` and the `advance` functions into one. You can find more information about this issue on the [source code for the parser of project six](<../06/Hack Assembler/Hack Assembler/Parser.cpp>) and in [this thread](http://nand2tetris-questions-and-answers-forum.52.s1.nabble.com/hasMoreLines-and-advance-Methods-How-to-properly-implement-them-td4036441.html).
