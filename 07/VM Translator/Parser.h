@@ -20,7 +20,7 @@ public:
 	bool find_next_command();
 
 	// Returns a constant representing the intruction type of the current instruction.
-	uint8_t command_type();
+	// uint8_t command_type();
 
 	// Instruction types.
 	
@@ -36,15 +36,25 @@ public:
 	static constexpr uint8_t C_CALL = 9;
 
 	// Returns the first argument of the current command.
-	std::string arg1();
+	// std::string arg1();
 
 	// Return the second argument of the current command.
-	int arg2();
+	// int arg2();
 
-private:
-	std::ifstream input_file;
 	std::string current_command;
 	unsigned current_line;
+
+private:
+	// Helper functions.
+
+	// Removes leading whitespace and comments that start with "//".
+	std::string clean_command(std::string command);
+
+	// Members
+
+	std::ifstream input_file;
+	// std::string current_command;
+	// unsigned current_line;
 };
 
 #endif
