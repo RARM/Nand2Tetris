@@ -20,7 +20,7 @@ public:
 	bool find_next_command();
 
 	// Returns a constant representing the intruction type of the current instruction.
-	// uint8_t command_type();
+	uint8_t command_type();
 
 	// Instruction types.
 	
@@ -45,18 +45,26 @@ public:
 	
 	std::string get_current_command() { return this->current_command; }
 	unsigned get_current_line() { return this->current_line; }
+	std::string get_error_message() { return this->error_message; }
 
 private:
 	// Helper functions.
 
+	// Returns the number of words in the current command.
+	unsigned words_number();
+
 	// Removes leading whitespace and comments that start with "//".
 	std::string clean_command(std::string command);
+
+	// Checks if the given string is a valid arithmetic-logical command.
+	bool is_al_command(std::string word);
 
 	// Members
 
 	std::ifstream input_file;
 	std::string current_command;
 	unsigned current_line;
+	std::string error_message;
 };
 
 #endif

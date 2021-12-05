@@ -57,3 +57,76 @@ std::string Parser::clean_command(std::string command)
 
     return command;
 }
+
+uint8_t Parser::command_type()
+{
+    unsigned total_words(this->words_number());
+    std::string command(this->current_command.substr(0, this->current_command.find(" "))); // First word.
+    uint8_t command_type(Parser::INVALID_INS);
+
+    if (is_al_command(command))
+    {
+        if (total_words != 1)
+            this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Arithmetic-logial command has too many arguments.";
+        else
+            command_type = Parser::C_ARITHMETIC;
+    }
+
+    else
+        this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Uknown command \"" + command + "\".";
+
+    return command_type;
+}
+
+unsigned Parser::words_number()
+{
+    size_t pos = 0;
+    unsigned total_words = 0;
+    bool in_word = false;
+
+    while (pos < this->current_command.size())
+    {
+        if (!in_word && this->current_command.at(pos) != ' ')
+        {
+            in_word = true;
+            total_words++;
+            pos++;
+        }
+
+        else if (in_word && this->current_command.at(pos) == ' ')
+        {
+            in_word = false;
+            pos++;
+        }
+
+        else pos++;
+    }
+
+    return total_words;
+}
+
+bool Parser::is_al_command(std::string word)
+{
+    bool valid{ false };
+    // Valid Arithmetic-Logical commands.
+    const std::vector<std::string> valid_al_commands{
+        "add",
+        "sub",
+        "neg",
+        "eq",
+        "gt",
+        "lt",
+        "and",
+        "or",
+        "not"
+    };
+
+    for (auto valid_al_command : valid_al_commands)
+        if (word.compare(valid_al_command) == 0)
+        {
+            valid = true;
+            break;
+        }
+    
+    return valid;
+}
