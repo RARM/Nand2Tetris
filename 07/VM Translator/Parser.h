@@ -2,6 +2,7 @@
 #define _PARSER_H_
 
 #include <string>
+#include <vector>
 #include <fstream>
 
 class Parser
@@ -50,14 +51,17 @@ public:
 private:
 	// Helper functions.
 
-	// Returns the number of words in the current command.
-	unsigned words_number();
-
 	// Removes leading whitespace and comments that start with "//".
 	std::string clean_command(std::string command);
 
-	// Checks if the given string is a valid arithmetic-logical command.
-	bool is_al_command(std::string word);
+	// Updates the current_command_words vector.
+	void split_command_words();
+
+	// Checks if the current_command is a valid arithmetic-logical command.
+	bool is_al_command();
+
+	// Checks if the current push/pop command has a valid segment.
+	bool has_valid_segment();
 
 	// Members
 
@@ -65,6 +69,7 @@ private:
 	std::string current_command;
 	unsigned current_line;
 	std::string error_message;
+	std::vector<std::string> current_command_words;
 };
 
 #endif

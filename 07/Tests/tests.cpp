@@ -47,11 +47,11 @@ void command_type_test_1()
 
     Parser my_parser(std::string("SimpleAdd.vm"));
 
-    /*while (my_parser.find_next_command())
+    while (my_parser.find_next_command())
     {
         if (my_parser.command_type() == Parser::INVALID_INS)
             std::cout << my_parser.get_error_message() << "\n";
-    }*/
+    }
 
     return;
 }

@@ -2,7 +2,7 @@
 #include <vector>
 
 Parser::Parser(std::string input_filename)
-    : current_command{ std::string("") }, input_file{ std::ifstream(input_filename) }, current_line{ 0 }
+    : current_command{ std::string("") }, input_file{ std::ifstream(input_filename) }, current_line{ 0 }, error_message{ "" }, current_command_words{}
 {}
 
 Parser::~Parser()
@@ -25,7 +25,11 @@ bool Parser::find_next_command()
     } while (!this->input_file.eof() && line.size() == 0);
 
     command_found = (line.size() > 0) ? true : false;
-    if (command_found) this->current_command = line;
+    if (command_found)
+    {
+        this->current_command = line;
+        this->split_command_words();
+    }
 
     return command_found;
 }
@@ -58,54 +62,69 @@ std::string Parser::clean_command(std::string command)
     return command;
 }
 
-uint8_t Parser::command_type()
+void Parser::split_command_words()
 {
-    unsigned total_words(this->words_number());
-    std::string command(this->current_command.substr(0, this->current_command.find(" "))); // First word.
-    uint8_t command_type(Parser::INVALID_INS);
+    unsigned pos{ 0 };
+    std::string word;
+    bool in_word{ false };
 
-    if (is_al_command(command))
-    {
-        if (total_words != 1)
-            this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Arithmetic-logial command has too many arguments.";
-        else
-            command_type = Parser::C_ARITHMETIC;
-    }
-
-    else
-        this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Uknown command \"" + command + "\".";
-
-    return command_type;
-}
-
-unsigned Parser::words_number()
-{
-    size_t pos = 0;
-    unsigned total_words = 0;
-    bool in_word = false;
-
+    this->current_command_words.clear();
+    
     while (pos < this->current_command.size())
     {
         if (!in_word && this->current_command.at(pos) != ' ')
         {
             in_word = true;
-            total_words++;
-            pos++;
+            word.push_back(this->current_command.at(pos++));
         }
 
         else if (in_word && this->current_command.at(pos) == ' ')
         {
             in_word = false;
+            this->current_command_words.push_back(word);
+            word.clear();
             pos++;
         }
+
+        else if (in_word && this->current_command.at(pos) != ' ')
+            word.push_back(this->current_command.at(pos++));
 
         else pos++;
     }
 
-    return total_words;
+    this->current_command_words.push_back(word);
 }
 
-bool Parser::is_al_command(std::string word)
+uint8_t Parser::command_type()
+{
+    uint8_t command_type(Parser::INVALID_INS);
+
+    // Arithmetic-logic command.
+    if (this->is_al_command())
+        if (this->current_command_words.size() != 1)
+            this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Arithmetic-logial command has too many arguments.";
+        else
+            command_type = Parser::C_ARITHMETIC;
+
+    // Push command.
+    if (this->current_command_words.at(0) == "push")
+        if (this->current_command_words.size() < 3)
+            this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Push command has too few arguments.";
+        else if (this->current_command_words.size() > 3)
+            this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Push command has too many arguments.";
+        else if (!this->has_valid_segment())
+            this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Push command has invalid segment \"" + this->current_command_words.at(1) + "\".";
+        // else if () // Check range of the index.
+        else
+            command_type = Parser::C_PUSH;
+
+    else
+        this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Uknown command \"" + this->current_command_words.at(0) + "\".";
+
+    return command_type;
+}
+
+bool Parser::is_al_command()
 {
     bool valid{ false };
     // Valid Arithmetic-Logical commands.
@@ -122,11 +141,16 @@ bool Parser::is_al_command(std::string word)
     };
 
     for (auto valid_al_command : valid_al_commands)
-        if (word.compare(valid_al_command) == 0)
+        if (this->current_command_words.at(0).compare(valid_al_command) == 0)
         {
             valid = true;
             break;
         }
     
     return valid;
+}
+
+bool Parser::has_valid_segment()
+{
+
 }
