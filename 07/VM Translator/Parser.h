@@ -14,7 +14,7 @@ public:
 
 	// bool hasMoreLines();
 	// void advance();
-	// Has it was done in chapter 06. These methods are being combined.
+	// As it was done in chapter 06. These methods are being combined.
 	// Read implementation of the Parser on the previous chapter for more information.
 
 	// Loads the next command into current_command. Returns false when there are no more commands.

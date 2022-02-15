@@ -107,16 +107,27 @@ uint8_t Parser::command_type()
             command_type = Parser::C_ARITHMETIC;
 
     // Push command.
-    if (this->current_command_words.at(0) == "push")
+    else if (this->current_command_words.at(0) == "push")
         if (this->current_command_words.size() < 3)
             this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Push command has too few arguments.";
         else if (this->current_command_words.size() > 3)
             this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Push command has too many arguments.";
         else if (!this->has_valid_segment())
             this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Push command has invalid segment \"" + this->current_command_words.at(1) + "\".";
-        // else if () // Check range of the index.
+        // else if () // Check range of the index. How could I implement this?
         else
             command_type = Parser::C_PUSH;
+
+    // Pop command.
+    else if (this->current_command_words.at(0) == "pop")
+        if (this->current_command_words.size() < 3)
+            this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Pop command has too few arguments.";
+        else if (this->current_command_words.size() > 3)
+            this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Pop command has too many arguments.";
+        else if (!this->has_valid_segment())
+            this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Pop command has invalid segment \"" + this->current_command_words.at(1) + "\".";
+        else
+            command_type = Parser::C_POP;
 
     else
         this->error_message = "Error at line (" + std::to_string(this->current_line) + "): Uknown command \"" + this->current_command_words.at(0) + "\".";
@@ -150,7 +161,32 @@ bool Parser::is_al_command()
     return valid;
 }
 
+// This should be called only if the command is push or pop.
 bool Parser::has_valid_segment()
 {
+    bool valid{ false };
 
+    // Valid segments for both push and pop.
+    const std::vector<std::string> valid_segments {
+        "argument",
+        "local",
+        "static",
+        "this",
+        "that",
+        "pointer",
+        "index"
+    };
+
+    for (auto valid_segment: valid_segments)
+        if (this->current_command_words.at(1).compare(valid_segment) == 0)
+        {
+            valid = true;
+            break;
+        }
+
+    // Checking if segment is "constant" only if command is "push".
+    if (this->current_command_words.at(0).compare("push") == 0 && this->current_command_words.at(1).compare("constant") == 0)
+        valid = true;
+
+    return valid;
 }

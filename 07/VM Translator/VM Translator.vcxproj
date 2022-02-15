@@ -147,6 +147,10 @@
     <ClInclude Include="CodeWriter.h" />
     <ClInclude Include="Parser.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Implementation.md" />
+    <None Include="..\README.md" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
